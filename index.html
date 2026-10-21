@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>3D Printed Tiltrotor VTOL | Isaac</title>
+  <meta name="description" content="Design, build, and flight test of a 3D printed tricopter tiltrotor VTOL flying wing.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✈️</text></svg>">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- ===================== TITLE BLOCK ===================== -->
+  <div class="project-head">
+    <div class="title-block">
+      <div class="tb-title">
+        <h1>3D printed tiltrotor VTOL</h1>
+        <p>A tricopter tiltrotor flying wing, designed, built, and flight tested from scratch to carry a GoPro Hero 11, with fully autonomous flight as the end goal.</p>
+      </div>
+      <div><span class="tb-label">Configuration</span><span class="tb-value">Tricopter tiltrotor, plank flying wing</span></div>
+      <div><span class="tb-label">Wingspan</span><span class="tb-value">800 mm</span></div>
+      <div><span class="tb-label">Takeoff weight</span><span class="tb-value">1,176 g</span></div>
+      <div><span class="tb-label">Flight controller</span><span class="tb-value">ArduPilot, Matek F405</span></div>
+      <div><span class="tb-label">Status</span><span class="tb-value">Forward flight tuning</span></div>
+      <div class="tb-rev"><span class="tb-label">Revision</span><span class="tb-value">V3</span></div>
+    </div>
+
+    <!-- VIDEO (YouTube): most successful flight -->
+    <figure class="media hero-media" data-type="youtube"
+            data-src="aWI-J-n9Pdg"
+            data-alt="Most successful flight to date"
+            data-caption="Most successful flight to date"></figure>
+  </div>
+
+  <div class="project-layout">
+
+    <!-- ===================== SIDEBAR ===================== -->
+    <aside class="toc" aria-label="Page contents">
+      <button class="toc-toggle" type="button" aria-expanded="false">
+        Contents <span class="current"></span>
+        <svg class="chev" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 5l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
+      </button>
+      <p class="toc-heading">On this page</p>
+      <nav>
+        <ol>
+          <li><a href="#overview">Overview</a>
+            <ol>
+              <li><a href="#current-status">Current status</a></li>
+              <li><a href="#design-goals">Design goals</a></li>
+              <li><a href="#requirements">Requirements</a></li>
+              <li><a href="#constraints">Design constraints</a></li>
+              <li><a href="#weight">Weight</a></li>
+            </ol>
+          </li>
+          <li><a href="#design">Configuration and aerodynamics</a>
+            <ol>
+              <li><a href="#configuration">Configuration</a></li>
+              <li><a href="#wing-sizing">Wing sizing</a></li>
+              <li><a href="#airfoil">Airfoil</a></li>
+              <li><a href="#vertical-stabilizers">Vertical stabilizer and elevon sizing</a></li>
+              <li><a href="#weight-balance">Center of gravity</a></li>
+            </ol>
+          </li>
+          <li><a href="#avionics">Avionics and payload</a></li>
+          <li><a href="#tilt-mechanism">Tilt mechanism</a></li>
+          <li><a href="#structure">Structure and manufacturing</a>
+            <ol>
+              <li><a href="#design-approach">Design approach</a></li>
+              <li><a href="#materials">Materials</a></li>
+              <li><a href="#manufacturing-constraints">Manufacturing constraints</a></li>
+              <li><a href="#fuselage">Fuselage</a></li>
+              <li><a href="#wings">Wings</a></li>
+              <li><a href="#tilt-rotor-assembly">Tilt rotor assembly</a></li>
+              <li><a href="#elevons">Elevons</a></li>
+              <li><a href="#vstab-structure">Vertical stabilizers</a></li>
+              <li><a href="#mounts">VTX and GPS mounts</a></li>
+            </ol>
+          </li>
+          <li><a href="#iterations">Design iterations</a>
+            <ol>
+              <li><a href="#v1">Version 1</a></li>
+              <li><a href="#v2">Version 2</a></li>
+              <li><a href="#v3">Version 3</a></li>
+            </ol>
+          </li>
+          <li><a href="#flight-testing">Flight testing</a>
+            <ol>
+              <li><a href="#methodology">Methodology</a></li>
+              <li><a href="#filters">Filters</a></li>
+              <li><a href="#pids">PIDs</a></li>
+              <li><a href="#performance">Real world performance</a></li>
+            </ol>
+          </li>
+          <li><a href="#lessons">Lessons learned</a></li>
+          <li><a href="#next-steps">Next steps</a></li>
+        </ol>
+      </nav>
+    </aside>
+
+    <main id="main" class="content">
+
+      <!-- ===================== OVERVIEW ===================== -->
+      <section id="overview">
+        <h2>Overview</h2>
+        <p class="lede">I am designing, building, and flight testing a 3D printed tiltrotor VTOL from scratch. The goal is to create a versatile fixed-wing platform that can record high-definition video with a GoPro Hero 11 and act as a testbed for autonomous missions.</p>
+        <p>I chose a plank flying wing configuration for the airframe because of its compact and simple form. A tiltrotor VTOL system eliminates the need for a runway while avoiding the weight and drag of extra motors used only for one phase of flight. The powertrain came from an old 5-inch FPV drone I already had, which set many of the design constraints.</p>
+
+        <!-- PHOTOS: CAD model and real aircraft, side by side -->
+        <div class="media-pair">
+          <figure class="media" data-type="image"
+                  data-src="media/aircraft-cad.jpg"
+                  data-alt="CAD model of the aircraft"
+                  data-ratio="4/3"
+                  data-caption="CAD model"></figure>
+          <figure class="media" data-type="image"
+                  data-src="media/aircraft.jpg"
+                  data-alt="The completed aircraft"
+                  data-ratio="4/3"
+                  data-caption="Built aircraft"></figure>
+        </div>
+
+        <h3 id="current-status">Current status</h3>
+        <p>The aircraft has successfully transitioned from hover to forward flight and back. I am now tuning forward flight and the transitions. Once these are stable, I will attempt autonomous flight.</p>
+
+        <h3 id="design-goals">Design goals</h3>
+        <p>Because this aircraft has no specific flight mission, there are no endurance or range requirements. Instead, the design prioritizes repairability and durability at the cost of added weight.</p>
+
+        <!-- PHOTO: overall dimensions -->
+        <figure class="media" data-type="image"
+                data-src="media/overall-dimensions.jpg"
+                data-alt="Dimensioned drawing showing the aircraft's overall size"
+                data-caption="Overall dimensions"></figure>
+
+        <h3 id="requirements">Requirements</h3>
+        <!-- EDIT: set each status to done / progress / planned -->
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Requirement</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td>Carry a GoPro Hero 11, integrated into the fuselage</td><td><span class="status done">Complete</span></td></tr>
+              <tr><td>Include an FPV system, integrated into the fuselage</td><td><span class="status done">Complete</span></td></tr>
+              <tr><td>Assembled with hardware instead of glue, for repairability</td><td><span class="status done">Complete</span></td></tr>
+              <tr><td>Stable hover</td><td><span class="status done">Complete</span></td></tr>
+              <tr><td>Transition between hover and forward flight in both directions</td><td><span class="status done">Complete</span></td></tr>
+              <tr><td>Capable of autonomous flight</td><td><span class="status progress">Not yet tested</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 id="constraints">Design constraints</h3>
+        <ul>
+          <li>Built around existing components to minimize cost</li>
+          <li>5-inch propellers</li>
+          <li>4S battery</li>
+        </ul>
+
+        <h3 id="weight">Weight</h3>
+        <p>I initially estimated a takeoff weight of 1,000 g based on my components and a rough airframe estimate. The actual weight is 1,176 g. Based on the motor manufacturer data, this gives a thrust-to-weight ratio of 3.75:1. In practice the aircraft hovers at around 50% throttle, which puts the real thrust-to-weight ratio at roughly 3:1.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th></th><th class="num">Value</th></tr></thead>
+            <tbody>
+              <tr><td>Estimated takeoff weight</td><td class="num">1,000&nbsp;g</td></tr>
+              <tr><td>Actual takeoff weight</td><td class="num">1,176&nbsp;g</td></tr>
+              <tr><td>Thrust-to-weight, manufacturer data</td><td class="num">3.75&nbsp;:&nbsp;1</td></tr>
+              <tr><td>Thrust-to-weight, observed at hover</td><td class="num">~3&nbsp;:&nbsp;1</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ===================== DESIGN ===================== -->
+      <section id="design">
+        <h2>Configuration and aerodynamics</h2>
+
+        <h3 id="configuration">Configuration</h3>
+        <p>The aircraft is a plank flying wing with the front two motors tilting and the rear one stationary. To size it, I started from existing designs that use similar components. The MiniHawk-VTOL project uses the same size motors and was the starting point for my design. Another useful resource was MH airfoils, which provides information specifically for the aerodynamics of model aircraft. I also found many useful forum discussions.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Parameter</th><th class="num">Value</th></tr></thead>
+            <tbody>
+              <tr><td>Takeoff weight (rounded)</td><td class="num">≈1,200&nbsp;g</td></tr>
+              <tr><td>Wingspan</td><td class="num">800&nbsp;mm</td></tr>
+              <tr><td>Chord (as built)</td><td class="num">185&nbsp;mm</td></tr>
+              <tr><td>Wing planform area (rectangular)</td><td class="num">148,000&nbsp;mm<sup>2</sup></td></tr>
+              <tr><td>Aspect ratio</td><td class="num">4.3</td></tr>
+              <tr><td>Wing loading</td><td class="num">81&nbsp;g/dm<sup>2</sup></td></tr>
+              <tr><td>Vertical stabilizer area (combined)</td><td class="num">12,600&nbsp;mm<sup>2</sup></td></tr>
+              <tr><td>Elevons (each)</td><td class="num">50&nbsp;×&nbsp;225&nbsp;mm (27% of chord)</td></tr>
+              <tr><td>Estimated cruise speed</td><td class="num">15&nbsp;m/s</td></tr>
+              <tr><td>Reynolds number at cruise</td><td class="num">≈190,000</td></tr>
+              <tr><td>Lift coefficient at cruise (C<sub>L</sub>)</td><td class="num">0.58</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="airfoil-figures">
+          <figure class="media" data-type="image"
+                  data-src="media/airfoil.jpg"
+                  data-alt="MH 45 airfoil profile at 200 mm chord, showing 9.85% maximum thickness at 27.6% chord"
+                  data-ratio="2576/957"
+                  data-caption="MH 45 profile as drawn (200 mm chord)"></figure>
+
+          <figure class="polar-pair">
+            <div class="media-row">
+              <figure class="media w-cl" data-type="image"
+                      data-src="media/cl-vs-alpha.jpg"
+                      data-alt="MH 45 lift coefficient versus angle of attack at Re 200,000, peaking near 1.18 at about 12.5 degrees"
+                      data-ratio="624/609"></figure>
+              <figure class="media w-cm" data-type="image"
+                      data-src="media/cm-vs-alpha.jpg"
+                      data-alt="MH 45 pitching moment coefficient versus angle of attack at Re 200,000"
+                      data-ratio="639/631"></figure>
+            </div>
+            <figcaption>MH 45 lift coefficient (left) and pitching moment coefficient (right) vs angle of attack at Re = 200,000; data from Airfoil Tools</figcaption>
+          </figure>
+        </div>
+
+        <h3 id="wing-sizing">Wing sizing</h3>
+        <p>The aspect ratio of 4.3 costs some cruise efficiency, but it keeps the aircraft compact, which helps in hover. The wing loading of about 81 g/dm² is high for a model aircraft this size, since most are built from lighter foam. High wing loading raises the stall speed, but that matters less here because the aircraft lands vertically and never needs to fly slowly on the wing.</p>
+        <p>At 15 m/s cruise, the wing needs a lift coefficient of about 0.58. The MH 45 reaches a maximum 2D lift coefficient of about 1.18. With a typical 3D wing reduction, the wing’s maximum is roughly 1.0, which leaves a comfortable margin above the cruise requirement. The low aspect ratio also reduces the wing’s lift slope compared with the 2D airfoil, so the wing needs roughly 6–7° angle of attack at cruise. These numbers are preliminary estimates that I plan to check against flight data.</p>
+
+        <h3 id="airfoil">Airfoil</h3>
+        <p>I chose the MH 45 airfoil for its low pitching moment, which a tailless aircraft needs to stay trimmed without a horizontal tail. At Re = 200,000, close to my cruise Reynolds number, C<sub>m</sub> stays between about −0.02 and +0.015 from 0° to 14° angle of attack. At the estimated cruise angle of 6–7°, the moment is almost zero. The airfoil has also been used successfully on flying wings of similar size. At 9.85% thickness, it gives about 19.7 mm of depth at the thickest point, enough room for the servo and tilt rotor mounts. I drew the airfoil at a 200 mm chord, then cut it down to a 1.6 mm thick trailing edge so it could be printed reliably, which gives a 185 mm chord. The cut removes some of the reflex that keeps the pitching moment low, so I correct for it with elevon trim.</p>
+
+        <h3 id="vertical-stabilizers">Vertical stabilizer and elevon sizing</h3>
+        <p>I sized the vertical stabilizers and elevons from the proportions of similar flying wings rather than a detailed stability analysis. Each elevon is 50 × 225 mm, about 27% of the chord, and the vertical stabilizers total 8.5% of the wing area. The control authority has margin built in: I can increase elevon throw in software, and differential thrust adds yaw control.</p>
+
+        <h3 id="weight-balance">Center of gravity</h3>
+        <p>I balanced the aircraft with the CG between 20% and 25% of the chord. I added tabs on the wings at 20% and 25% chord as a physical reference, so I can move the battery to fine-tune the CG during flight testing.</p>
+      </section>
+
+      <!-- ===================== AVIONICS ===================== -->
+      <section id="avionics">
+        <h2>Avionics and payload</h2>
+        <!-- PHOTOS: electronics CAD and wiring diagram, side by side -->
+        <div class="media-pair fit">
+          <figure class="media" data-type="image"
+                  data-src="media/electronics-cad.jpg"
+                  data-alt="CAD view of the electronics layout inside the fuselage"
+                  data-ratio="4/3"
+                  data-caption="Electronics layout"></figure>
+          <figure class="media" data-type="image"
+                  data-src="media/wiring-diagram.jpg"
+                  data-alt="Wiring diagram of the flight controller, ESCs, servos, and peripherals"
+                  data-ratio="4/3"
+                  data-caption="Wiring diagram"></figure>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Component</th><th>Part</th></tr></thead>
+            <tbody>
+              <tr><td>Motors</td><td>T-Motor F60 IV 2550 Kv</td></tr>
+              <tr><td>ESCs</td><td>35 A BLHeli_32 (multiple brands)</td></tr>
+              <tr><td>Tilt servos</td><td>EMAX ES3054 HV</td></tr>
+              <tr><td>Elevon servos</td><td>EMAX ES3352 HV</td></tr>
+              <tr><td>Flight controller</td><td>Matek F405-WTE</td></tr>
+              <tr><td>Receiver</td><td>TBS Crossfire Nano</td></tr>
+              <tr><td>GPS / compass</td><td>HGLRC M100-5883</td></tr>
+              <tr><td>Video transmitter</td><td>TBS Unify Pro32 DP</td></tr>
+              <tr><td>FPV camera</td><td>RunCam Phoenix 2</td></tr>
+              <tr><td>Battery</td><td>Auline 3000 mAh Li-ion</td></tr>
+              <tr><td>Payload</td><td>GoPro Hero 11</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>I chose ArduPlane firmware because it is open source and has thorough documentation for autonomous flight. The flight controller mount is separate from the other electronics and acts as a soft mount, using the slight flex of the fuselage to isolate the gyro from vibration. I placed the GPS, VTX, and receiver as far apart as possible on the fuselage to limit interference between them.</p>
+      </section>
+
+      <!-- ===================== TILT MECHANISM ===================== -->
+      <section id="tilt-mechanism">
+        <h2>Tilt mechanism</h2>
+        <!-- PHOTO + VERTICAL VIDEO: tilt mechanism -->
+        <div class="media-pair with-vertical">
+          <figure class="media" data-type="image"
+                  data-src="media/tilt-mechanism.jpg"
+                  data-alt="Close-up of the tilt mechanism"
+                  data-ratio="4/3"
+                  data-caption="Tilt mechanism"></figure>
+          <figure class="media" data-type="video"
+                  data-src="media/tilt-mechanism.mp4"
+                  data-alt="Tilt mechanism moving through its range"
+                  data-ratio="9/16"
+                  data-caption="Tilt in motion"></figure>
+        </div>
+        <p>There are three common methods for tilting the motors: direct drive, servo linkage, and rack and pinion. I chose direct drive because its simplicity means fewer failure points and less slop in the tilt angle.</p>
+        <p>To verify the design, I bench tested the mechanism with the motor and propeller installed. I first used a spare metal-geared micro servo running at 5 V with a rated torque of 1.8 kg·cm. The servo burned out under load, which told me I needed more torque in the same size.</p>
+        <p>I chose the EMAX ES3054 HV, a metal-gear digital servo with approximately the same dimensions and a torque rating of 3.4 kg·cm at 6 V. I verified it by tilting the mechanism with the motor at full speed.</p>
+      </section>
+
+      <!-- ===================== STRUCTURE ===================== -->
+      <section id="structure">
+        <h2>Structure and manufacturing</h2>
+        <figure class="media large" data-type="image"
+                data-src="media/full-assembly.jpg"
+                data-alt="Assembly of the main airframe components"
+                data-caption="Assembly of the main components"></figure>
+
+        <h3 id="design-approach">Design approach</h3>
+        <p>I designed the airframe around three manufacturing limits: my printer's build volume, print orientation, and keeping support material to a minimum.</p>
+        <p>The main thing I disliked about other 3D printed airplanes is that most are assembled with super glue. A glued airframe makes it hard to repair a small section after the inevitable crash, and usually means printing an entire new airframe. I designed every major section to be held together with screws, heat-set inserts, and magnets instead. Glue is only used in small subassemblies that are replaced as one unit.</p>
+
+        <h3 id="materials">Materials</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Material</th><th>Where used</th><th>Why</th></tr></thead>
+            <tbody>
+              <tr><td>Foaming LW-PLA</td><td>Wings, fuselage, vertical stabilizers</td><td>~50% lighter than standard PLA depending on print settings; softer and more durable in impacts</td></tr>
+              <tr><td>PETG</td><td>Motor mounts, elevons</td><td>Stronger and more durable than LW-PLA; better heat resistance for motor mounts</td></tr>
+              <tr><td>TPU</td><td>VTX and GPS mounts</td><td>Flexible, giving the best impact protection for exterior components</td></tr>
+              <tr><td>Carbon fiber</td><td>Main spar, elevon hinge, vertical stabilizer spar</td><td>Adds strength and stiffness where the main loads are carried</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Version 1 used pre-foamed PLA for the airframe. It is lighter than standard PLA and easier to print, but I quickly discovered it was just as brittle as standard PLA and saved little weight. For Version 2, I switched to foaming LW-PLA, which behaves much more like real foam and absorbs impacts better.</p>
+
+        <h3 id="manufacturing-constraints">Manufacturing constraints</h3>
+        <p><strong>3D printer:</strong> Part size was constrained by my print volume of 220 × 220 × 250 mm. Internal structure was constrained by a maximum unsupported overhang of 45° from vertical.</p>
+        <p><strong>Fasteners:</strong> Every screw connection uses M2 or M3 heat-set inserts, so individual parts can be replaced repeatedly without stripping screw holes.</p>
+        <p><strong>Skin thickness:</strong> With a 0.4 mm nozzle, I made the skin 0.8 mm thick so it prints as exactly two walls. If one wall has a small defect such as underextrusion, the other wall still closes the skin.</p>
+
+        <h3 id="fuselage">Fuselage</h3>
+        <figure class="media large" data-type="image"
+                data-src="media/fuselage.jpg"
+                data-alt="Fuselage halves showing the interlocking flange and prongs"
+                data-caption="Fuselage assembly"></figure>
+        <p>The fuselage is printed in two pieces because it is too large for my printer, so I designed an interlocking structure to transfer load between the halves. An interlocking flange sits where the airfoil tapers into the fuselage, and prongs on the front half slide into the rear half. The prongs connect the front half to the main spar and give the rear skin internal structure.</p>
+        <p>The front half is the weakest part because it carries the GoPro and battery, about 300 g combined, or roughly 25% of the total takeoff weight. It is supported over a large surface area to prevent bending about the main spar. To improve its strength against lateral loads, I added magnets between the front half and the wings.</p>
+        <p>The electronics hatch is split directly from the fuselage surface, so it keeps the same smooth contour. I thickened it from 0.8 mm to 2 mm to survive repeated use and to support the VTX and GPS mounts on top. I originally made the hatch as a single piece, printed vertically, but had to split it because printer vibration left a rough surface on the top half of the part. The two halves are glued together, and the hatch attaches to the fuselage with a tab and magnets for quick access to the electronics.</p>
+
+        <h3 id="wings">Wings</h3>
+        <figure class="media large" data-type="image"
+                data-src="media/wings.jpg"
+                data-alt="Wing sections showing internal X bracing"
+                data-caption="Wing sections and internal structure"></figure>
+        <p>Each wing is printed in three sections: inner, outer, and wingtip. The main structure is in the inner and outer sections, so the wingtip is purely aerodynamic. I used X-bracing for the internal structure because it is strong and can be printed without supports. The inner section contains the motor mount, fuselage connection, and elevon servo, so it has extra internal support. The wing key is glued into the inner wing and acts as the main connection between the wing and fuselage.</p>
+        <p>The inner and outer sections join with an interlocking flange, a screw, and a magnet. The flange aligns the wing sections and prevents twist. The magnet sits in the leading edge and keeps the sections from splitting apart. This makes the screw purely a backup, since it only passes through the 0.8 mm bottom skin. The wingtip is attached with only a magnet and a small flange, since it is light and not critical to the structure.</p>
+
+        <h3 id="tilt-rotor-assembly">Tilt rotor assembly</h3>
+        <figure class="media" data-type="image"
+                data-src="media/tilt-rotor-assembly.jpg"
+                data-alt="Tilt rotor assembly with bearing and carbon spar"
+                data-caption="Tilt rotor assembly"></figure>
+        <p>Each tilt rotor is made of two 3D printed parts: the motor mount and the servo housing. Because the tilt mechanism is direct drive, I added a bearing opposite the servo horn to share the load with the servo. The assembly attaches to the wing with a through bolt that captures both the top and bottom skin of the wing.</p>
+
+        <h3 id="elevons">Elevons</h3>
+        <p>I modeled the elevons as solid bodies because they are thin and do not need extra internal support. I then used the slicer's infill and wall settings to create the internal structure, which let me fine-tune it for the best strength. The elevons hinge on a 4 mm carbon fiber rod that runs from the outer wing to the fuselage. The servo horn is also 3D printed and glued into a cutout in the elevon.</p>
+
+        <h3 id="vstab-structure">Vertical stabilizers</h3>
+        <figure class="media" data-type="image"
+                data-src="media/vertical-stabilizer.jpg"
+                data-alt="Vertical stabilizer"
+                data-caption="Vertical stabilizer"></figure>
+        <p>Like the elevons, the vertical stabilizers are modeled as solid bodies. They are printed in two halves, then aligned and reinforced with a 4 mm carbon fiber rod. A through bolt attaches the upper and lower stabilizers to the fuselage, and the shape of the mounting cutout keeps them from rotating.</p>
+
+        <h3 id="mounts">VTX and GPS mounts</h3>
+        <figure class="media" data-type="image"
+                data-src="media/vtx-gps-mounts.jpg"
+                data-alt="TPU mounts for the VTX and GPS on the hatch"
+                data-caption="TPU VTX and GPS mounts"></figure>
+        <p>The VTX and GPS mounts conform to the outer hatch geometry and attach with screws. Because they sit on the outside of the fuselage and take the first hit in a crash, I printed them in TPU to protect the components they hold.</p>
+      </section>
+
+      <!-- ===================== ITERATIONS ===================== -->
+      <section id="iterations">
+        <h2>Design iterations</h2>
+        <p>Hover testing and assembly exposed weaknesses that drove three versions of the airframe. Each revision targeted the failure modes found in the previous one.</p>
+
+        <div class="revision" id="v1">
+          <h3>Version 1 <span class="rev-tag">First hover</span></h3>
+          <div class="media-pair">
+            <!-- PHOTO: V1 -->
+            <figure class="media" data-type="image"
+                    data-src="media/v1.jpg"
+                    data-alt="Version 1 airframe"
+                    data-ratio="16/9"
+                    data-caption="Version 1 airframe"></figure>
+            <!-- VIDEO (YouTube): V1 hover testing -->
+            <figure class="media" data-type="youtube"
+                    data-src="b1whVSjZo5Q"
+                    data-alt="Version 1 hover testing"
+                    data-caption="Version 1 hover testing"></figure>
+          </div>
+          <p><strong>Original design:</strong></p>
+          <ul>
+            <li><strong>Material:</strong> Airframe printed in pre-foamed PLA.</li>
+            <li><strong>Fuselage joint:</strong> Halves glued together at a butt joint, with three small carbon fiber rods as stiffeners.</li>
+            <li><strong>Electronics:</strong> Attached to the bottom of the fuselage with double-sided tape.</li>
+            <li><strong>GPS and VTX:</strong> Hot glued onto the hatch.</li>
+            <li><strong>Wing key:</strong> Smaller than in later versions.</li>
+          </ul>
+          <p>Once the aircraft was assembled and hover testing started, several problems showed up: small parts broke off in low-height crashes, the glued fuselage joint pushed failures into other parts of the fuselage, the taped electronics would not stay attached, and the wings began to twist at the joint. Version 2 addresses each of these.</p>
+        </div>
+
+        <div class="revision" id="v2">
+          <h3>Version 2 <span class="rev-tag">Material and joints</span></h3>
+          <!-- PHOTO: V2 -->
+          <figure class="media" data-type="image"
+                  data-src="media/v2.jpg"
+                  data-alt="Version 2 airframe"
+                  data-caption="Version 2 airframe"></figure>
+          <ul>
+            <li><strong>Switched to foaming LW-PLA:</strong> Crashes were only from 3–5 ft during hover testing, but small parts of the airframe were still breaking off. The new material is lighter and absorbs impacts much more like foam.</li>
+            <li><strong>Redesigned the fuselage joint:</strong> In Version 1, the fuselage halves met at a butt joint held together only by glue and three small carbon fiber rods. The glue made the joint itself strong, but failures moved to other parts of the fuselage, and the halves could no longer be separated, which worked against my goal of replaceable parts. I replaced the butt joint with an overlapping, interlocking section, so the halves carry load through a large contact area instead of a thin glue line, with no glue needed. Long prongs on the front half connect to the main spar and reinforce the skin where the wing blends into the fuselage. I also added magnets to strengthen the front half against sideways forces.</li>
+            <li><strong>Added dedicated electronics mounts:</strong> Double-sided tape did not stick well to the printed material. Dedicated mounts also made the wiring cleaner and easier to work on.</li>
+            <li><strong>Increased the wing key size:</strong> The wings started to twist after multiple crashes. I increased the surface area of the wing key to spread out the load.</li>
+            <li><strong>Added support ribs:</strong> I added ribs at the wing key, the vertical stabilizer connection, and the elevon servo cutout.</li>
+          </ul>
+          <p>Flight testing revealed something I had overlooked: the softer material made the whole aircraft significantly more flexible. It could still hover, but it vibrated heavily, and I could not tune the vibration out in software.</p>
+        </div>
+
+        <div class="revision is-current" id="v3">
+          <h3>Version 3 <span class="rev-tag">Current, stiffness</span></h3>
+          <!-- PHOTO: V3 -->
+          <figure class="media" data-type="image"
+                  data-src="media/v3.jpg"
+                  data-alt="Version 3 airframe"
+                  data-caption="Version 3 airframe"></figure>
+          <p>The goal of this revision was to stiffen the entire airframe and eliminate the Version 2 vibration.</p>
+          <ul>
+            <li><strong>Larger main spar:</strong> Because the vibration involved the whole airframe, I moved from a 6 mm to an 8 mm main spar.</li>
+            <li><strong>Redesigned rear motor support:</strong> Inspecting the old frame, I found I could flex the rear motor mount by hand, and that motion carried through the whole fuselage. The old mount attached only to the bottom of the fuselage, with a single stiffener in the middle, so the bracing flexed along with the rear of the fuselage. I redesigned the mount to span the entire height of the fuselage and thickened the bracing. I also added support in the tapered section between the vertical stabilizers.</li>
+            <li><strong>Improved electronics mounts:</strong> I tied the rear electronics mount into the rear motor mount so its load spreads over more of the fuselage, and added cross-bracing so the mounts flex together as one unit. The flight controller mount stays separate and acts as a soft mount that isolates the gyro from vibration.</li>
+            <li><strong>Filleted sharp corners:</strong> LW-PLA tears easily at 90° joints where internal structure meets the skin, so I added fillets to the sharp internal corners throughout the fuselage.</li>
+            <li><strong>Reinforced the wings:</strong> Normal handling was damaging several areas, especially around the servo mount and the wingtips. I adjusted the cross-bracing and added support in those areas.</li>
+          </ul>
+          <p>Version 3 is currently in flight testing. The stiffness changes reduced the vibration enough for stable hover and the first transitions to forward flight.</p>
+        </div>
+      </section>
+
+      <!-- ===================== FLIGHT TESTING ===================== -->
+      <section id="flight-testing">
+        <h2>Flight testing</h2>
+        <!-- VIDEO (YouTube): hover testing -->
+        <figure class="media hero-media" data-type="youtube"
+                data-src="_39SZxINqkA"
+                data-alt="Hover testing"
+                data-caption="Hover testing"></figure>
+
+        <h3 id="methodology">Methodology</h3>
+        <p>I tuned the aircraft in hover first. Hover is low speed, so mistakes are easier to recover from, and it gives me a safe fallback: if something goes wrong in forward flight, I can switch back to hover and keep the aircraft from crashing.</p>
+        <p>For a starting point, I used PID gains from a 5-inch multirotor with similar hardware. Those gains were too aggressive for this airframe, so I lowered them step by step until the aircraft could hover under control. From there I tuned the hover configuration by hand. For forward flight, I used ArduPilot's built-in autotune.</p>
+
+        <h3 id="filters">Filters</h3>
+        <!-- PHOTOS: vibration plots, V2 and V3 -->
+        <figure class="media" data-type="image"
+                data-src="media/v2-hover.jpg"
+                data-alt="Version 2 hover vibration plot"
+                data-caption="Version 2 hover vibration"></figure>
+        <figure class="media" data-type="image"
+                data-src="media/v3-hover.jpg"
+                data-alt="Version 3 hover vibration plot"
+                data-caption="Version 3 hover vibration"></figure>
+        <p>I tuned the notch filters before the PIDs, because gyro noise limits the effective PID gains. ArduPilot supports two harmonic notch filters. The first is set up by default to track motor noise. The second can target any other noise source that appears in the data.</p>
+        <p>The main problem on Version 2 was a constant vibration in hover, even though the aircraft stayed controllable. Switching from the Version 1 material to a softer one made the entire airframe more flexible. Even with both notch filters enabled, vibration on the X and Z axes stayed between 6 and 10 m/s² and was visible in flight.</p>
+        <p>For Version 3, I improved the structural rigidity and strength of the airframe. After retuning the filters, vibration dropped to around 2 m/s² on the X and Z axes. The airframe was clean enough to remove the second notch filter, which also reduces the load on the flight controller’s CPU.</p>
+
+        <h3 id="pids">PIDs</h3>
+        <!-- PHOTOS: PID step response before and after tuning.
+             --ratio sets the shape of each picture box (e.g. 16/9, 3/2, 4/3, 1/1).
+             --width sets how much of the column the pair uses (e.g. 100%, 85%).
+             Images are scaled to fit inside the box and are never cropped. -->
+        <div class="media-pair adjustable" style="--ratio: 3/4; --width: 62%;">
+          <figure class="media" data-type="image"
+                  data-src="media/pid-before.jpg"
+                  data-alt="Pitch and roll step response before tuning"
+                  data-caption="Step response before tuning"></figure>
+          <figure class="media" data-type="image"
+                  data-src="media/pid-after.jpg"
+                  data-alt="Pitch and roll step response after tuning"
+                  data-caption="Step response after tuning"></figure>
+        </div>
+        <p>With the vibration under control, I tuned one axis at a time, raising the P gain first. I set the I gain to match P, then increased it as needed. Once P and I were tuned, I started increasing D, checking motor temperature after each flight, because too much D overworks the motors and heats them up. Every gain change was a small increment, tested over multiple flights.</p>
+        <p>The step response plots are for Version 3. The ideal response is a quick rise with a slight overshoot that settles at 1.0 without any oscillation. The plots vary slightly from flight to flight as conditions change, but the overall trend stays consistent.</p>
+        <p><strong>Roll:</strong> Before tuning, roll was slow and took about 250 ms to reach the setpoint. After tuning, it reaches the setpoint in about 100 ms and settles near 1.0.</p>
+        <p><strong>Pitch:</strong> Pitch started out fast but overshot to about 1.2 and stayed 15–20% above the setpoint. I lowered the I gain and raised P and D slightly to get rid of the overshoot. Pitch now settles around 0.8, which is stable but slow. When I tried raising the gains further, the vibration I saw on Version 2 started to return, so a faster response will take a physical change to the airframe.</p>
+        <p><strong>Yaw:</strong> I left yaw alone. It was already acceptable, and its response depends mostly on the tilt servos moving the motors rather than on the gains.</p>
+
+        <h3 id="performance">Real world performance</h3>
+        <!-- VIDEO (YouTube): maiden flight -->
+        <figure class="media hero-media" data-type="youtube"
+                data-src="jvSQX-NRq_Y"
+                data-alt="Maiden flight"
+                data-caption="Maiden flight"></figure>
+      </section>
+
+      <!-- ===================== LESSONS ===================== -->
+      <section id="lessons">
+        <h2>Lessons learned</h2>
+        <ul>
+          <li><strong>Plan the CAD model before building it:</strong> The most transferable lesson from this project was how to organize a feature tree and choose references. When I started, I began modeling without much thought about how the features would relate to each other. Before I reached the Version 1 airframe, this caught up with me on the fuselage, which is built from an airfoil profile and a complex curve for the main body. Small changes to either one broke the entire model, and it eventually became faster to start over from scratch than to work through the errors. Now I plan the feature tree up front and make better use of reference planes, so changes update cleanly instead of breaking the model.</li>
+          <li><strong>Treat a material change as a design change:</strong> At the start, I made many small test prints to understand how strong the material was and how my structure would hold up. When I switched to foaming LW-PLA, I didn’t fully understand the differences, assumed it would behave the same, and never ran small test prints with it. I underestimated how much more the softer material would let the airframe flex, which caused the vibration problems in Version 2. I learned that a large material change means re-analyzing the whole structure, not just swapping the filament.</li>
+        </ul>
+      </section>
+
+      <!-- ===================== NEXT STEPS ===================== -->
+      <section id="next-steps">
+        <h2>Next steps</h2>
+        <p>Version 3 flies successfully, including transitions between hover and forward flight. The next goal is fully autonomous flight, which first needs stable forward flight and smoother transitions.</p>
+        <ol>
+          <li><strong>Tune forward flight:</strong> Fly in fixed-wing mode and adjust the CG and control surface throws, then tune the PID loops until the aircraft holds altitude and heading with only small corrections.</li>
+          <li><strong>Tune transitions:</strong> The transition to forward flight currently has a few seconds of instability. I suspect the transition speed is the cause, so I’ll adjust it and compare flight logs before and after each change.</li>
+          <li><strong>Test autonomous modes:</strong> First confirm that altitude hold and position hold work in both hover and forward flight. Then fly a waypoint mission entirely in hover mode before attempting a full mission with transitions.</li>
+        </ol>
+      </section>
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <div class="inner">
+      <!-- EDIT: your name and LinkedIn profile URL -->
+      <span>© <span data-year></span> Isaac</span>
+      <a href="https://www.linkedin.com/in/isaacarp" target="_blank" rel="noopener">LinkedIn</a>
+    </div>
+  </footer>
+
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
