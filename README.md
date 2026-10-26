@@ -13,7 +13,7 @@ A tricopter tiltrotor flying wing that I designed, built, and flight tested from
   </tr>
 </table>
 
-### **[View the full project write-up →](https://USERNAME.github.io/REPO-NAME/)**
+### **[View the full project write-up →](https://https://isaac542.github.io/3D-Printed-Tilt-rotor-VTOL/)**
 
 ## At a Glance
 
