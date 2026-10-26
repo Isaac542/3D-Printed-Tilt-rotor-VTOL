@@ -1,32 +1,23 @@
-# 3D printed tiltrotor VTOL
+# 3D Printed Tiltrotor VTOL
 
-Single-page static site for GitHub Pages. No build step, no Jekyll.
+A tricopter tiltrotor flying wing that I designed, built, and flight tested from scratch. It takes off and lands vertically, transitions to efficient forward flight, and carries a GoPro Hero 11, with fully autonomous flight as the end goal.
 
-## Structure
+<table>
+  <tr>
+    <td width="50%"><img src="media/aircraft-cad.jpg" alt="CAD model of the aircraft" width="100%"></td>
+    <td width="50%"><img src="media/aircraft.jpg" alt="The completed aircraft" width="100%"></td>
+  </tr>
+  <tr>
+    <td align="center"><em>CAD model</em></td>
+    <td align="center"><em>Built aircraft</em></td>
+  </tr>
+</table>
 
-    index.html          the whole site (tiltrotor VTOL project page)
-    assets/css/style.css
-    assets/js/main.js
-    media/              photos and video used on the page
-    .nojekyll           tells GitHub Pages to serve files as-is
+### **[View the full project write-up →](https://USERNAME.github.io/REPO-NAME/)**
 
-## Publish
-1. Push everything in this folder (including the hidden `.nojekyll` file) to the repo root.
-2. Repo Settings → Pages → Source: "Deploy from a branch", branch `main`, folder `/ (root)`.
+## At a Glance
 
-## Adding or swapping photos and videos
-Drop a file into `media/` and point a slot at it:
+- **Configuration:** 800 mm wingspan plank flying wing, two tilting front motors and a fixed rear motor, MH 45 airfoil
+- **Status:** Successfully transitions between hover and forward flight; currently tuning forward flight ahead of autonomous missions
 
-    <figure class="media" data-type="image"
-            data-src="media/fuselage.jpg"
-            data-alt="What the photo shows"
-            data-caption="Caption under the photo."></figure>
-
-- `data-type`: `image`, `video` (mp4), or `youtube`
-- `data-src`: file path, or the YouTube video ID (the part after `v=`)
-- `data-ratio`: placeholder shape, e.g. `16/9` (default), `4/3`, `1/1`
-- add `data-loop` to a video to autoplay muted on loop
-
-File names are case-sensitive on GitHub Pages: `photo.JPG` and `photo.jpg` are different files.
-Export photos around 2000 px wide as JPG (~300 KB). GitHub rejects files over 100 MB, so
-compress videos to 1080p H.264 mp4, or upload to YouTube and use `data-type="youtube"`.
+The full write-up walks through the design process from start to finish, including aerodynamic sizing, the tilt mechanism, structural design, three airframe revisions, and flight test tuning.
